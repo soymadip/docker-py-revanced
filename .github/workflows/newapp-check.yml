@@ -22,7 +22,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@main
         with:
-          python-version: '3.11'
+          python-version: '3.11.5'
 
       - name: Install Requirements
         run: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Update Check
         run: |
-          run: echo "${{ steps.status.outputs.changelog }}"
+          echo "${{ steps.status.outputs.changelog }}"
 
       - name: Upload status file
         uses: actions/upload-artifact@main

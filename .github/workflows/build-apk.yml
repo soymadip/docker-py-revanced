@@ -35,7 +35,7 @@ on:
         description: "Update Changelog"
         type: boolean
         required: false
-        default: true
+        default: false
       DEBUG_ENABLED:
         type: boolean
         description: 'Run the build with tmate debugging enabled.'
@@ -74,7 +74,7 @@ jobs:
           curl https://github.com/nikhilbadyal/docker-py-revanced/blob/changelogs/changelog.md > changelog.md
 
       - name: Delete Older Releases
-        uses: nikhilbadyal/ghaction-rm-releases@v0.0.2
+        uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_PATTERN: "Build*"

@@ -11,6 +11,10 @@ on:
       REDDIT_CLIENT_ID:
         required: false
     inputs:
+      CI_TEST:
+        required: false
+        type: boolean
+        default: false
       COMMIT_CHANGELOG:
         type: boolean
         required: false
@@ -23,6 +27,7 @@ on:
 
 jobs:
   build-apk:
+    permissions: write-all
     name: APK Build
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -70,13 +75,22 @@ jobs:
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@master
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.DEBUG_ENABLED }}
+        with:
+          detached: true
 
       - name: Build Revanced APKs
+        if: ${{ true && !inputs.DEBUG_ENABLED }}
         run: |
-          docker-compose up --build
-
+          if [[ "${{ inputs.CI_TEST }}" =~ ^(true|True|1)$ ]]; then
+              echo "In CI Testing. Using local compose file."
+              docker-compose -f docker-compose-local.yml up --build
+          else
+              echo "Using Prod compose file."
+              docker-compose up --build
+          fi
       - name: Upload Build APKS
         uses: actions/upload-artifact@main
+        if: ${{ true && !inputs.DEBUG_ENABLED }}
         with:
           name: Built-APKs
           path: |

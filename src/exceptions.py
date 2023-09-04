@@ -1,13 +1,30 @@
-from typing import Any
+"""Possible Exceptions."""
+from typing import Any, Self
 
 
-class APKMirrorIconScrapFailure(Exception):
-    """Exception raised when the icon cannot be scraped from apkmirror."""
+class BuilderError(Exception):
+    """Base class for all the project errors."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    message = "Default Error message."
+
+    def __init__(self: Self, *args: Any, **kwargs: Any) -> None:
+        if args:
+            self.message = args[0]
+        super().__init__(self.message)
+
+    def __str__(self: Self) -> str:
+        """Return error message."""
+        return self.message
+
+
+class ScrapingError(BuilderError):
+    """Exception raised when the url cannot be scraped."""
+
+    def __init__(self: Self, *args: Any, **kwargs: Any) -> None:
         """Initialize the APKMirrorIconScrapFailure exception.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
                 url (str, optional): The URL of the failed icon scraping. Defaults to None.
@@ -16,13 +33,30 @@ class APKMirrorIconScrapFailure(Exception):
         self.url = kwargs.get("url", None)
 
 
-class DownloadFailure(Exception):
+class APKMirrorIconScrapError(ScrapingError):
+    """Exception raised when the icon cannot be scraped from apkmirror."""
+
+
+class APKComboIconScrapError(ScrapingError):
+    """Exception raised when the icon cannot be scraped from apkcombo."""
+
+
+class APKPureIconScrapError(ScrapingError):
+    """Exception raised when the icon cannot be scraped from apkpure."""
+
+
+class APKMonkIconScrapError(ScrapingError):
+    """Exception raised when the icon cannot be scraped from apkmonk."""
+
+
+class DownloadError(BuilderError):
     """Generic Download failure."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the APKMirrorAPKDownloadFailure exception.
+    def __init__(self: Self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the DownloadFailure exception.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
                 url (str, optional): The URL of the failed icon scraping. Defaults to None.
@@ -30,65 +64,64 @@ class DownloadFailure(Exception):
         super().__init__(*args)
         self.url = kwargs.get("url", None)
 
+    def __str__(self: Self) -> str:
+        """Exception message."""
+        base_message = super().__str__()
+        return f"Message - {base_message} Url - {self.url}"
 
-class APKDownloadFailure(DownloadFailure):
+
+class APKDownloadError(DownloadError):
     """Exception raised when the apk cannot be scraped."""
 
-    pass
 
-
-class APKMirrorAPKDownloadFailure(APKDownloadFailure):
+class APKMirrorAPKDownloadError(APKDownloadError):
     """Exception raised when downloading an APK from apkmirror failed."""
 
-    pass
+
+class APKMonkAPKDownloadError(APKDownloadError):
+    """Exception raised when downloading an APK from apkmonk failed."""
 
 
-class APKMirrorAPKNotFound(APKDownloadFailure):
+class APKMirrorAPKNotFoundError(APKDownloadError):
     """Exception raised when apk doesn't exist on APKMirror."""
 
-    pass
 
-
-class UptoDownAPKDownloadFailure(APKDownloadFailure):
+class UptoDownAPKDownloadError(APKDownloadError):
     """Exception raised when downloading an APK from uptodown failed."""
 
-    pass
 
-
-class APKPureAPKDownloadFailure(APKDownloadFailure):
+class APKPureAPKDownloadError(APKDownloadError):
     """Exception raised when downloading an APK from apkpure failed."""
 
-    pass
 
-
-class APKSosAPKDownloadFailure(APKDownloadFailure):
+class APKSosAPKDownloadError(APKDownloadError):
     """Exception raised when downloading an APK from apksos failed."""
 
-    pass
 
-
-class PatchingFailed(Exception):
+class PatchingFailedError(BuilderError):
     """Patching Failed."""
 
-    pass
 
-
-class AppNotFound(ValueError):
+class AppNotFoundError(BuilderError):
     """Not a valid Revanced App."""
 
-    pass
 
-
-class PatchesJsonLoadFailed(ValueError):
+class PatchesJsonLoadError(BuilderError):
     """Failed to load patches json."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self: Self, *args: Any, **kwargs: Any) -> None:
         """Initialize the PatchesJsonLoadFailed exception.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
                 file_name (str, optional): The name of json file. Defaults to None.
         """
         super().__init__(*args)
         self.file_name = kwargs.get("file_name", None)
+
+    def __str__(self: Self) -> str:
+        """Exception message."""
+        base_message = super().__str__()
+        return f"Message - {base_message} Url - {self.file_name}"
