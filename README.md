@@ -1,6 +1,8 @@
 # 🤓Docker-Py-ReVanced
 
-A little python script that will help you in building Revanced [apps](#patch-apps).
+![Docker Pulls](https://img.shields.io/docker/pulls/nikhilbadyal/docker-py-revanced)
+
+A little python script that will help you in building [Revanced](https://revanced.app/) [apps](#any-patch-apps) and sharing them anywhere.
 
 **`Note`** - If you are a root user and want magisk module (Extended). Get them [here](https://github.com/nikhilbadyal/revanced-magisk-module)
 
@@ -11,6 +13,7 @@ A little python script that will help you in building Revanced [apps](#patch-app
 
 You can get pre-built apks [here](https://revanced_apkss.t.me/)
 
+## Facing issues? Click [here](https://github.com/nikhilbadyal/docker-py-revanced/issues/new/choose).<br>
 ## Build Yourself
 
 You can use any of the following methods to build.
@@ -46,6 +49,8 @@ You can use any of the following methods to build.
 
      5. If the building process is successful, you’ll get your APKs in the<br>
         <img src="https://i.imgur.com/S5d7qAO.png" width="700" style="left">
+     6. Make sure to do below steps once in a while(daily or weekly) to keep the builder bug free.<br>
+        <img src="https://i.imgur.com/CbdH7vM.png" width="700" style="left">
 
 - 🐳 **_Docker Compose_**<br>
 
@@ -61,7 +66,7 @@ You can use any of the following methods to build.
     4. Update `.env` file if you want some customization(See notes)
     5. Run script with
        ```shell
-       docker-compose up --build
+       docker compose up --build
        ```
 
 - 🐳With Docker
@@ -112,10 +117,9 @@ You can use any of the following methods to build.
 | [GLOBAL_CLI_DL*](#global-resources)                      |     DL for CLI to be used for patching apps.      | [Revanced CLI](https://github.com/revanced/revanced-cli)                                                              |
 | [GLOBAL_PATCHES_DL*](#global-resources)                  |   DL for Patches to be used for patching apps.    | [Revanced Patches](https://github.com/revanced/revanced-patches)                                                      |
 | [GLOBAL_SPACE_FORMATTED_PATCHES*](#global-resources)     |       Whether patches are space formatted.        | True                                                                                                                  |
-| [GLOBAL_PATCHES_JSON_DL*](#global-resources)             | DL for Patches Json to be used for patching apps. | [Revanced Patches](https://github.com/revanced/revanced-patches)                                                      |
-| [GLOBAL_INTEGRATIONS_DL*](#global-resources)             | DL for Integrations to be used for patching apps. | [Revanced Integrations](https://github.com/revanced/revanced-integrations)                                            |
 | [GLOBAL_KEYSTORE_FILE_NAME*](#global-keystore-file-name) |       Key file to be used for signing apps        | [Builder's own key](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/revanced.keystore)              |
-| [GLOBAL_OLK_KEY*](#global-keystore-file-name)            | Whether key was generated with cli v4(new) or not | <br/>[Builder's v3(old) own key](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/revanced.keystore) |
+| [GLOBAL_OLD_KEY*](#global-keystore-file-name)            | Whether key was generated with cli v4(new) or not | <br/>[Builder's v3(old) own key](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/revanced.keystore) |
+| [GLOBAL_OPTIONS_FILE*](#global-options-file)             |              Options file to be used              | [Builder's default file](https://github.com/nikhilbadyal/docker-py-revanced/blob/main/apks/options.json)              |
 | [GLOBAL_ARCHS_TO_BUILD*](#global-archs-to-build)         |         Arch to keep in the patched apk.          | All                                                                                                                   |
 | REDDIT_CLIENT_ID                                         |       Reddit Client ID to patch reddit apps       | None                                                                                                                  |
 | VT_API_KEY                                               |           Virus Total Key to scan APKs            | None                                                                                                                  |
@@ -124,6 +128,9 @@ You can use any of the following methods to build.
 | [TELEGRAM_API_ID](#telegram-support)                     |         Used for telegram Authentication          | None                                                                                                                  |
 | [TELEGRAM_API_HASH](#telegram-support)                   |         Used for telegram Authentication          | None                                                                                                                  |
 | [EXTRA_FILES](#extra-files)                              |    Extra files apk to upload in GitHub upload.    | None                                                                                                                  |
+| [APPRISE_URL](#apprise)                                  |                   Apprise URL .                   | None                                                                                                                  |
+| [APPRISE_NOTIFICATION_TITLE](#apprise)                   |           Apprise Notification Title .            | None                                                                                                                  |
+| [APPRISE_NOTIFICATION_BODY](#apprise)                    |            Apprise Notification Body .            | None                                                                                                                  |
 
 `*` - Can be overridden for individual app.
 ### App Level Config
@@ -132,9 +139,7 @@ You can use any of the following methods to build.
 |:------------------------------------------------------------|:--------------------------------------------------------------------------------------------:|:-------------------------------|
 | [*APP_NAME*_CLI_DL](#global-resources)                      |                       DL for CLI to be used for patching **APP_NAME**.                       | GLOBAL_CLI_DL                  |
 | [*APP_NAME*_PATCHES_DL](#global-resources)                  |                     DL for Patches to be used for patching **APP_NAME**.                     | GLOBAL_PATCHES_DL              |
-| [*APP_NAME*_PATCHES_JSON_DL](#global-resources)             |                  DL for Patches Json to be used for patching **APP_NAME**.                   | GLOBAL_PATCHES_JSON_DL         |
 | [*APP_NAME*_SPACE_FORMATTED_PATCHES](#global-resources)     |                     Whether patches are space formatted.   **APP_NAME**.                     | GLOBAL_SPACE_FORMATTED_PATCHES |
-| [*APP_NAME*_INTEGRATIONS_DL](#global-resources)             |                  DL for Integrations to be used for patching **APP_NAME**.                   | GLOBAL_INTEGRATIONS_DL         |
 | [*APP_NAME*_KEYSTORE_FILE_NAME](#global-keystore-file-name) |                        Key file to be used for signing **APP_NAME**.                         | GLOBAL_KEYSTORE_FILE_NAME      |
 | [*APP_NAME*_OLD_KEY](#global-keystore-file-name)            | Whether key used was generated with cli > v4(new) <br/><br/>**APP_NAME**.      <br/>   <br/> | GLOBAL_OLK_KEY                 |
 | [*APP_NAME*_ARCHS_TO_BUILD](#global-archs-to-build)         |                          Arch to keep in the patched **APP_NAME**.                           | GLOBAL_ARCHS_TO_BUILD          |
@@ -155,6 +160,7 @@ You can use any of the following methods to build.
 
     - [youtube](https://www.apkmirror.com/apk/google-inc/youtube/)
     - [youtube_music](https://www.apkmirror.com/apk/google-inc/youtube-music/)
+    - [photos](https://www.apkmirror.com/apk/google-inc/photos)
     - [twitter](https://www.apkmirror.com/apk/twitter-inc/twitter/)
     - [reddit](https://www.apkmirror.com/apk/redditinc/reddit/)
     - [tiktok](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/)
@@ -207,6 +213,16 @@ You can use any of the following methods to build.
     - [reddit-news](https://m.apkpure.com/relay-for-reddit/reddit.news)
     - [finanz-online](https://apksos.com/app/at.gv.bmf.bmf2go)
     - [tumblr](https://www.apkmirror.com/apk/tumblr-inc/tumblr/)
+    - [fitnesspal](https://www.apkmirror.com/apk/myfitnesspal-inc/calorie-counter-myfitnesspal/)
+    - [facebook](https://www.apkmirror.com/apk/facebook-2/facebook/)
+    - [lemmy-sync](https://www.apkmirror.com/apk/sync-apps-ltd/sync-for-lemmy/)
+    - [amazon](https://www.apkmirror.com/apk/amazon-mobile-llc/amazon-shopping/)
+    - [bandcamp](https://www.apkmirror.com/apk/bandcamp-inc/bandcamp/)
+    - [magazines](https://www.apkmirror.com/apk/bandcamp-inc/bandcamp/)
+    - [winrar](https://www.apkmirror.com/apk/rarlab-published-by-win-rar-gmbh/rar/)
+    - [soundcloud](https://www.apkmirror.com/apk/soundcloud/soundcloud-soundcloud/)
+    - [stocard](https://www.apkmirror.com/apk/stocard-gmbh/stocard-rewards-cards-wallet/)
+    - [willhaben](https://www.apkmirror.com/apk/willhaben/willhaben/)
 
     <br>`**` - You can also patch any other app which is **not** supported officially.To do so, you need to provide
    few more inputs to the tool which are mentioned below. These config will override the sources config from the tool.
@@ -225,9 +241,9 @@ You can use any of the following methods to build.
    3. APKSOS - Supports downloading any available version
        1. Link Format - https://apksos.com/download-app/<package-name>
        2. Example Link - https://apksos.com/download-app/com.expensemanager
-   4. APKPURE - Supports downloading only latest version
-       1. Link Format - https://d.apkpure.com/b/APK/<package-name>?version=latest
-       2. Example Link - https://d.apkpure.com/b/APK/com.google.android.youtube?version=latest
+   4. APKPURE - Supports downloading any available version
+       1. Link Format - https://apkpure.net/-/<package-name>
+       2. Example Link - https://apkpure.net/-/com.google.android.youtube
    5. APKMonk - Supports downloading any available version
        1. Link Format - https://www.apkmonk.com/app/<package-name>/
        2. Example Link - https://www.apkmonk.com/app/<package-name>/
@@ -249,6 +265,8 @@ You can use any of the following methods to build.
    ```ini
    PATCH_APPS=youtube,twitter,reddit
    ```
+   Tip - If for some reason you want to patch app but want to go through all this .env while running you can enter app
+   name in <img src="https://i.imgur.com/DwhBH9H.png" width="300" style="left"><br> to be patched box.
 5. <a id="existing-downloaded-apks"></a>If APKMirror or other apk sources are blocked in your region or script
    somehow is unable to download from apkmirror. You can download apk manually from any source. Place them in
    `/apks` directory and provide environment variable in `.env` file or in `ENVS` in `GitHub secrets`(Recommended)
@@ -273,8 +291,6 @@ You can use any of the following methods to build.
    ```dotenv
     GLOBAL_CLI_DL=https://github.com/revanced/revanced-cli
     GLOBAL_PATCHES_DL=https://github.com/revanced/revanced-patches
-    GLOBAL_PATCHES_JSON_DL=https://github.com/revanced/revanced-patches
-    GLOBAL_INTEGRATIONS_DL=local://integrations.apk
    ```
    Resources downloaded from envs and will be used for patching for any **APP_NAME**.
    Unless provided different resource for the individual app.<br><br>
@@ -285,15 +301,25 @@ You can use any of the following methods to build.
    ```dotenv
     YOUTUBE_CLI_DL=https://github.com/inotia00/revanced-cli
     YOUTUBE_PATCHES_DL=https://github.com/inotia00/revanced-patches
-    YOUTUBE_PATCHES_JSON_DL=https://github.com/inotia00/revanced-patches
-    YOUTUBE_INTEGRATIONS_DL=https://github.com/inotia00/revanced-integrations
    ```
    With the config tool will try to patch YouTube with resources from inotia00 while other global resource will used
    for patching other apps.<br>
    If you have want to provide resource locally in the apks folder. You can specify that by mentioning filename
-   prefixed with `local://`.
-   *Note* - The link provided must be DLs. Unless they are from GitHub.
-   *Note* - Some of the patch source like inotia00 still provides **-** seperated patches while revanced shifted to
+   prefixed with `local://`.<br>
+   *Note* - The link provided must be DLs. Unless they are from GitHub.<br>
+   *Note* - If your patches resource are available on GitHub and you want to select latest resource without excluding
+    pre-release you can add `latest-prerelease` to the URL.
+    Example:
+   ```dotenv
+    YOUTUBE_PATCHES_DL=https://github.com/inotia00/revanced-patches/releases/latest-prerelease
+   ```
+   For above example tool while selecting latest patches will consider pre-releases/beta too.
+    ```dotenv
+    YOUTUBE_PATCHES_DL=https://github.com/inotia00/revanced-patches/releases/latest
+   ```
+   For above example tool while selecting latest patches will exclude any pre-release/beta ie. will consider only
+    stable releases..<br>
+   *Note* - Some of the patch source like inotia00 still provides **-** separated patches while revanced shifted to
    Space formatted patches. Use `SPACE_FORMATTED_PATCHES` to define the type of patches.
 
 8. <a id="global-keystore-file-name"></a>If you don't want to use default keystore. You can provide your own by
@@ -317,31 +343,43 @@ You can use any of the following methods to build.
     ```dotenv
     YOUTUBE_OLD_KEY=False
    ```
-9. <a id="global-archs-to-build"></a>You can build only for a particular arch in order to get smaller apk files.This
-   can be done with by adding comma separated `ARCHS_TO_BUILD` in `ENVS` in `GitHub secrets` (Recommended) in the
-   format.
+9. <a id="global-options-file"></a>If you don't want to use default options.json file. You can provide your own by
+   placing it inside `apks` folder. And adding the name of `options-file` in `.env` file or in `ENVS` in `GitHub
+   secrets` (Recommended) in the format
    ```dotenv
-    GLOABAL_ARCHS_TO_BUILD=arm64-v8a,armeabi-v7a
+    GLOBAL_OPTIONS_FILE=my_options.json
    ```
-   Tool also support configuring at app level.<br>
+   Tool also support providing secret key at app level. You can sign A app with X key while signing B with Y
+   key.<br>
+    Example:
+   ```dotenv
+    YOUTUBE_OPTIONS_FILE=my_cool_yt_options.json
+   ```
+10. <a id="global-archs-to-build"></a>You can build only for a particular arch in order to get smaller apk files.This
+    can be done with by adding comma separated `ARCHS_TO_BUILD` in `ENVS` in `GitHub secrets` (Recommended) in the
+    format.
+    ```dotenv
+     GLOABAL_ARCHS_TO_BUILD=arm64-v8a,armeabi-v7a
+    ```
+    Tool also support configuring at app level.<br>
 
-   Example:
-   ```dotenv
-    YOUTUBE_ARCHS_TO_BUILD=arm64-v8a,armeabi-v7a
-   ```
-   *Note* -
-   1. Possible values are: `armeabi-v7a`,`x86`,`x86_64`,`arm64-v8a`
-   2. Make sure the patching resource(CLI) support this feature.
-10. <a id="extra-files"></a>If you want to include any extra file to the Github upload. Set comma arguments
+    Example:
+    ```dotenv
+     YOUTUBE_ARCHS_TO_BUILD=arm64-v8a,armeabi-v7a
+    ```
+    *Note* -
+    1. Possible values are: `armeabi-v7a`,`x86`,`x86_64`,`arm64-v8a`
+    2. Make sure the patching resource(CLI) support this feature.
+11. <a id="extra-files"></a>If you want to include any extra file to the Github upload. Set comma arguments
      in `.env` file or in `ENVS` in `GitHub secrets` (Recommended) in the format
     ```ini
     EXTRA_FILES=<url>@<appName>.apk
     ```
     Example:
     ```dotenv
-     EXTRA_FILES=https://github.com/inotia00/mMicroG/releases/latest@mmicrog.apk,https://github.com/revanced/revanced-integrations@integrations.apk
+     EXTRA_FILES=https://github.com/inotia00/mMicroG/releases/latest@mmicrog.apk
     ```
-11. <a id="custom-exclude-patching"></a>If you want to exclude any patch. Set comma separated patch in `.env` file
+12. <a id="custom-exclude-patching"></a>If you want to exclude any patch. Set comma separated patch in `.env` file
     or in `ENVS` in `GitHub secrets` (Recommended) in the format
     ```ini
     <APP_NAME>_EXCLUDE_PATCH=<PATCH_TO_EXCLUDE-1,PATCH_TO_EXCLUDE-2>
@@ -355,7 +393,7 @@ You can use any of the following methods to build.
     1. **All** the patches for an app are **included** by default.<br>
     2. Revanced patches are provided as space separated, make sure you type those **-** separated here.
     It means a patch named _**Hey There**_ must be entered as **_hey-there_** in the above example.
-12. <a id="custom-include-patching"></a>If you want to include any universal patch. Set comma separated patch in `.env`
+13. <a id="custom-include-patching"></a>If you want to include any universal patch. Set comma separated patch in `.env`
     file or in `ENVS` in `GitHub secrets` (Recommended) in the format
     ```ini
     <APP_NAME>_INCLUDE_PATCH=<PATCH_TO_EXCLUDE-1,PATCH_TO_EXCLUDE-2>
@@ -367,7 +405,7 @@ You can use any of the following methods to build.
     Note -
     1. Revanced patches are provided as space separated, make sure you type those **-** separated here.
        It means a patch named _**Hey There**_ must be entered as **_hey-there_** in the above example.
-13. <a id="app-version"></a>If you want to build a specific version or latest version. Add `version` in `.env` file
+14. <a id="app-version"></a>If you want to build a specific version or latest version. Add `version` in `.env` file
     or in `ENVS` in `GitHub secrets` (Recommended) in the format
     ```ini
     <APP_NAME>_VERSION=<VERSION>
@@ -378,7 +416,7 @@ You can use any of the following methods to build.
     YOUTUBE_MUSIC_VERSION=X.X.X
     TWITTER_VERSION=latest
     ```
-14. <a id="app-dl"></a>If you have your personal source for apk to be downloaded. You can also provide that and tool
+15. <a id="app-dl"></a>If you have your personal source for apk to be downloaded. You can also provide that and tool
     will not scarp links from apk sources.Add `dl` in `.env` file or in `ENVS` in `GitHub secrets` (Recommended) in
     the format
     ```ini
@@ -388,7 +426,7 @@ You can use any of the following methods to build.
     ```ini
     YOUTUBE_DL=https://d.apkpure.com/b/APK/com.google.android.youtube?version=latest
     ```
-15. <a id="telegram-support"></a>For Telegram Upload.
+16. <a id="telegram-support"></a>For Telegram Upload.
      1. Set up a telegram channel, send a message to it and forward the message to
         this telegram [bot](https://t.me/username_to_id_bot)
      2. Copy `id` and save it to `TELEGRAM_CHAT_ID`<br>
@@ -402,8 +440,16 @@ You can use any of the following methods to build.
         <img src="https://i.imgur.com/7n5k1mp.png" width="300" style="left"><br>
      6. After Everything done successfully a part of the actions secrets of the repository may look like<br>
         <img src="https://i.imgur.com/Cjifz1M.png" width="400">
-16. Configuration defined in `ENVS` in `GitHub secrets` will override the configuration in `.env` file. You can use this
+17. Configuration defined in `ENVS` in `GitHub secrets` will override the configuration in `.env` file. You can use this
     fact to define your normal configurations in `.env` file and sometimes if you want to build something different just
     once. Add it in `GitHub secrets`.<br>
-17. Sample Envs<br>
+18. Sample Envs<br>
     <img src="https://i.imgur.com/FxOtiGs.png" width="600" style="left">
+19. <a id="apprise"></a>[Apprise](https://github.com/caronc/apprise)<br>
+    We also have apprise support to upload built apk anywhere.To use apprise. Add belows envs in `.env` file
+    or in `ENVS` in `GitHub secrets` (Recommended) in the format
+    ```ini
+    APPRISE_URL=tgram://bot-token/chat-id
+    APPRISE_NOTIFICATION_BODY=What a great Body
+    APPRISE_NOTIFICATION_TITLE=What a great title
+    ```

@@ -1,15 +1,14 @@
 """Revanced Patches."""
 
 import contextlib
-import json
-from pathlib import Path
-from typing import Any, ClassVar, Self
+from typing import ClassVar, Self
 
 from loguru import logger
 
 from src.app import APP
 from src.config import RevancedConfig
-from src.exceptions import AppNotFoundError, PatchesJsonLoadError
+from src.exceptions import AppNotFoundError
+from src.patches_gen import convert_command_output_to_json
 
 
 class Patches(object):
@@ -70,6 +69,18 @@ class Patches(object):
         "reddit.news": "reddit-news",
         "at.gv.bmf.bmf2go": "finanz-online",
         "com.tumblr": "tumblr",
+        "com.myfitnesspal.android": "fitnesspal",
+        "com.facebook.katana": "facebook",
+        "io.syncapps.lemmy_sync": "lemmy-sync",
+        "com.xiaomi.wearable": "xiaomi-wearable",
+        "com.google.android.apps.photos": "photos",
+        "com.amazon.mShop.android.shopping": "amazon",
+        "com.bandcamp.android": "bandcamp",
+        "com.google.android.apps.magazines": "magazines",
+        "com.rarlab.rar": "winrar",
+        "com.soundcloud.android": "soundcloud",
+        "de.stocard.stocard": "stocard",
+        "at.willhaben": "willhaben",
     }
 
     @staticmethod
@@ -113,8 +124,10 @@ class Patches(object):
             The `app` parameter is of type `APP`. It represents an instance of the `APP` class.
         """
         self.patches_dict[app.app_name] = []
-        patch_loader = PatchLoader()
-        patches = patch_loader.load_patches(f'{config.temp_folder}/{app.resource["patches_json"]}')
+        patches = convert_command_output_to_json(
+            f"{config.temp_folder}/{app.resource["cli"]["file_name"]}",
+            f"{config.temp_folder}/{app.resource["patches"]["file_name"]}",
+        )
 
         for patch in patches:
             if not patch["compatiblePackages"]:
@@ -133,7 +146,7 @@ class Patches(object):
         app.no_of_patches = len(self.patches_dict[app.app_name])
 
     def __init__(self: Self, config: RevancedConfig, app: APP) -> None:
-        self.patches_dict: dict[str, Any] = {"universal_patch": []}
+        self.patches_dict: dict[str, list[dict[str, str]]] = {"universal_patch": []}
         self.fetch_patches(config, app)
 
     def get(self: Self, app: str) -> tuple[list[dict[str, str]], str]:
@@ -186,28 +199,3 @@ class Patches(object):
         app.app_version = recommended_version
         app.experiment = experiment
         return total_patches
-
-
-class PatchLoader(object):
-    """Patch Loader."""
-
-    @staticmethod
-    def load_patches(file_name: str) -> Any:
-        """The function `load_patches` loads patches from a file and returns them.
-
-        Parameters
-        ----------
-        file_name : str
-            The `file_name` parameter is a string that represents the name or path of the file from which
-        the patches will be loaded.
-
-        Returns
-        -------
-            the patches loaded from the file.
-        """
-        try:
-            with Path(file_name).open() as f:
-                return json.load(f)
-        except FileNotFoundError as e:
-            msg = "File not found"
-            raise PatchesJsonLoadError(msg, file_name=file_name) from e

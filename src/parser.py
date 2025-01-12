@@ -1,5 +1,5 @@
 """Revanced Parser."""
-from pathlib import Path
+
 from subprocess import PIPE, Popen
 from time import perf_counter
 from typing import Self
@@ -19,8 +19,7 @@ class Parser(object):
     CLI_JAR = "-jar"
     APK_ARG = "-a"
     NEW_APK_ARG = "patch"
-    PATCHES_ARG = "-b"
-    INTEGRATIONS_ARG = "-m"
+    PATCHES_ARG = "-p"
     OUTPUT_ARG = "-o"
     KEYSTORE_ARG = "--keystore"
     OPTIONS_ARG = "--options"
@@ -32,14 +31,15 @@ class Parser(object):
         self.config = config
 
     def include(self: Self, name: str) -> None:
-        """The function `include` adds a given patch to a list of patches.
+        """
+        The function `include` adds a given patch to the front of a list of patches.
 
         Parameters
         ----------
         name : str
             The `name` parameter is a string that represents the name of the patch to be included.
         """
-        self._PATCHES.extend(["-i", name])
+        self._PATCHES[:0] = ["-e", name]
 
     def exclude(self: Self, name: str) -> None:
         """The `exclude` function adds a given patch to the list of excluded patches.
@@ -49,7 +49,7 @@ class Parser(object):
         name : str
             The `name` parameter is a string that represents the name of the patch to be excluded.
         """
-        self._PATCHES.extend(["-e", name])
+        self._PATCHES.extend(["-d", name])
         self._EXCLUDED.append(name)
 
     def get_excluded_patches(self: Self) -> list[str]:
@@ -85,11 +85,10 @@ class Parser(object):
         """
         try:
             name = name.lower().replace(" ", "-")
-            patch_index = self._PATCHES.index(name)
             indices = [i for i in range(len(self._PATCHES)) if self._PATCHES[i] == name]
             for patch_index in indices:
                 if self._PATCHES[patch_index - 1] == "-e":
-                    self._PATCHES[patch_index - 1] = "-i"
+                    self._PATCHES[patch_index - 1] = "-d"
                 else:
                     self._PATCHES[patch_index - 1] = "-e"
         except ValueError:
@@ -100,49 +99,42 @@ class Parser(object):
     def exclude_all_patches(self: Self) -> None:
         """The function `exclude_all_patches` exclude all the patches."""
         for idx, item in enumerate(self._PATCHES):
-            if item == "-i":
-                self._PATCHES[idx] = "-e"
+            if idx == 0:
+                continue
+            if item == "-e":
+                self._PATCHES[idx] = "-d"
 
     def include_exclude_patch(
         self: Self,
         app: APP,
         patches: list[dict[str, str]],
-        patches_dict: dict[str, str],
+        patches_dict: dict[str, list[dict[str, str]]],
     ) -> None:
         """The function `include_exclude_patch` includes and excludes patches for a given app."""
         if app.space_formatted:
             for patch in patches:
                 normalized_patch = patch["name"].lower().replace(" ", "-")
-                self.include(patch["name"]) if normalized_patch not in app.exclude_request else self.exclude(
-                    patch["name"],
+                (
+                    self.include(patch["name"])
+                    if normalized_patch not in app.exclude_request
+                    else self.exclude(
+                        patch["name"],
+                    )
                 )
-            for normalized_patch in app.include_request:
-                self.include(normalized_patch.lower().replace("-", " ")) if normalized_patch not in patches_dict[
-                    "universal_patch"
-                ] else ()
+            for patch in patches_dict["universal_patch"]:
+                normalized_patch = patch["name"].lower().replace(" ", "-")
+                self.include(patch["name"]) if normalized_patch in app.include_request else ()
         else:
             for patch in patches:
-                normalized_patch = patch["name"].lower().replace(" ", "-")
-                self.include(normalized_patch) if normalized_patch not in app.exclude_request else self.exclude(
-                    normalized_patch,
+                (
+                    self.include(patch["name"])
+                    if patch["name"] not in app.exclude_request
+                    else self.exclude(
+                        patch["name"],
+                    )
                 )
-            for normalized_patch in app.include_request:
-                self.include(normalized_patch) if normalized_patch not in patches_dict["universal_patch"] else ()
-
-    @staticmethod
-    def is_new_cli(cli_path: Path) -> tuple[bool, str]:
-        """Check if new cli is being used."""
-        process = Popen(["java", "-jar", cli_path, "-V"], stdout=PIPE)
-        output = process.stdout
-        if not output:
-            msg = "Failed to send request for patching."
-            raise PatchingFailedError(msg)
-        combined_result = "".join(line.decode() for line in output)
-        if "v3" in combined_result or "v4" in combined_result:
-            logger.debug("New cli")
-            return True, combined_result
-        logger.debug("Old cli")
-        return False, combined_result
+            for patch in patches_dict["universal_patch"]:
+                self.include(patch["name"]) if patch["name"] in app.include_request else ()
 
     # noinspection IncorrectFormatting
     def patch_app(
@@ -157,36 +149,31 @@ class Parser(object):
             The `app` parameter is an instance of the `APP` class. It represents an application that needs
         to be patched.
         """
-        is_new, version = self.is_new_cli(self.config.temp_folder.joinpath(app.resource["cli"]))
-        if is_new:
-            apk_arg = self.NEW_APK_ARG
-            exp = "--force"
-        else:
-            apk_arg = self.APK_ARG
-            exp = "--experimental"
+        apk_arg = self.NEW_APK_ARG
+        exp = "--force"
         args = [
             self.CLI_JAR,
-            app.resource["cli"],
+            app.resource["cli"]["file_name"],
             apk_arg,
             app.download_file_name,
             self.PATCHES_ARG,
-            app.resource["patches"],
-            self.INTEGRATIONS_ARG,
-            app.resource["integrations"],
+            app.resource["patches"]["file_name"],
             self.OUTPUT_ARG,
             app.get_output_file_name(),
             self.KEYSTORE_ARG,
             app.keystore_name,
             self.OPTIONS_ARG,
-            "options.json",
+            app.options_file,
         ]
-        if app.experiment:
-            logger.debug("Using experimental features")
-            args.append(exp)
+        args.append(exp)
         args[1::2] = map(self.config.temp_folder.joinpath, args[1::2])
-        if app.old_key and "v4" in version:
+        if app.old_key:
             # https://github.com/ReVanced/revanced-cli/issues/272#issuecomment-1740587534
-            old_key_flags = ["--alias=alias", "--keystore-entry-password=ReVanced", "--keystore-password=ReVanced"]
+            old_key_flags = [
+                "--keystore-entry-alias=alias",
+                "--keystore-entry-password=ReVanced",
+                "--keystore-password=ReVanced",
+            ]
             args.extend(old_key_flags)
         if self.config.ci_test:
             self.exclude_all_patches()

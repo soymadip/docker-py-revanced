@@ -1,4 +1,5 @@
 """Downloader Class."""
+
 import os
 import subprocess
 from pathlib import Path
@@ -11,9 +12,8 @@ from tqdm import tqdm
 
 from src.app import APP
 from src.config import RevancedConfig
-from src.downloader.utils import implement_method
 from src.exceptions import DownloadError
-from src.utils import handle_request_response, session
+from src.utils import handle_request_response, implement_method, session
 
 
 class Downloader(object):

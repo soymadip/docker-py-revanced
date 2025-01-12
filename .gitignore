@@ -9,3 +9,5 @@ changelog.md
 *.json
 status.md
 *.zip
+apks/*
+*.rvp

@@ -9,11 +9,95 @@
     ]
   },
   {
+    "patchName": "Custom branding name Reddit",
+    "options": [
+      {
+        "key": "AppName",
+        "value": "Reddit"
+      }
+    ]
+  },
+  {
+    "patchName": "Change package name",
+    "options": [
+      {
+        "key": "PackageNameReddit",
+        "value": "com.reddit.frontpage.rvx"
+      }
+    ]
+  },
+  {
+    "patchName": "Overlay buttons",
+    "options": [
+      {
+        "key": "OutlineIcon",
+        "value": true
+      },
+      {
+        "key": "BottomMargin",
+        "value": "0.0dip"
+      }
+    ]
+  },
+  {
+    "patchName": "Shorts overlay buttons",
+    "options": [
+      {
+        "key": "IconType",
+        "value": "TikTok"
+      }
+    ]
+  },
+  {
+    "patchName": "SponsorBlock",
+    "options": [
+      {
+        "key": "OutlineIcon",
+        "value": true
+      }
+    ]
+  },
+  {
+    "patchName": "Visual preferences icons",
+    "options": [
+      {
+        "key": "MainSettings",
+        "value": true
+      },
+      {
+        "key": "ExtendedSettings",
+        "value": true
+      },
+      {
+        "key": "ExtendedIcon",
+        "value": "Extension"
+      }
+    ]
+  },
+  {
+    "patchName": "Settings",
+    "options": [
+      {
+        "key": "InsertPosition",
+        "value": "About"
+      }
+    ]
+  },
+  {
     "patchName": "Custom double tap length",
     "options": [
       {
         "key": "DoubleTapLengthArrays",
         "value": "3, 5, 10, 15, 20, 30, 60, 120, 180"
+      }
+    ]
+  },
+  {
+    "patchName": "Tuck away preferences",
+    "options": [
+      {
+        "key": "SettingElements",
+        "value": "Data saving, Video quality preferences, Manage all history, Privacy, Try experimental new features, Purchases and memberships, Billing & payments, Connected apps, Live chat, Captions, About"
       }
     ]
   },
@@ -27,11 +111,68 @@
     ]
   },
   {
+    "patchName": "Custom branding wordmark header",
+    "options": [
+      {
+        "key": "header",
+        "value": "yt_premium_wordmark_header"
+      }
+    ]
+  },
+  {
+    "patchName": "Premium heading",
+    "options": [
+      {
+        "key": "UsePremiumHeading",
+        "value": true
+      }
+    ]
+  },
+  {
     "patchName": "Custom Video Speed",
     "options": [
       {
         "key": "CustomSpeedArrays",
         "value": "0.25, 0.5, 0.75, 0.9, 1.0, 1.12, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0"
+      }
+    ]
+  },
+  {
+    "patchName": "Custom package name",
+    "options": [
+      {
+        "key": "PackageNameYouTube",
+        "value": "com.google.android.youtube.dockerpy"
+      },
+      {
+        "key": "PackageNameYouTubeMusic",
+        "value": "com.google.android.apps.youtube.music.dockerpy"
+      }
+    ]
+  },
+  {
+    "patchName": "Theme",
+    "options": [
+      {
+        "key": "DarkThemeBackgroundColor",
+        "value": "@android:color/black"
+      },
+      {
+        "key": "LightThemeBackgroundColor",
+        "value": "@android:color/white"
+      }
+    ]
+  },
+  {
+    "patchName": "GmsCore support",
+    "options": [
+      {
+        "key": "packageNameYouTube",
+        "value": "com.google.android.youtube.dockerpy"
+      },
+      {
+        "key": "packageNameYouTubeMusic",
+        "value": "com.google.android.apps.youtube.music.dockerpy"
       }
     ]
   }

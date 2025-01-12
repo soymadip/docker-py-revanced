@@ -1,4 +1,5 @@
 """Possible Exceptions."""
+
 from typing import Any, Self
 
 
@@ -30,7 +31,12 @@ class ScrapingError(BuilderError):
                 url (str, optional): The URL of the failed icon scraping. Defaults to None.
         """
         super().__init__(*args)
-        self.url = kwargs.get("url", None)
+        self.url = kwargs.get("url")
+
+    def __str__(self: Self) -> str:
+        """Exception message."""
+        base_message = super().__str__()
+        return f"Message - {base_message} Url - {self.url}"
 
 
 class APKMirrorIconScrapError(ScrapingError):
@@ -62,7 +68,7 @@ class DownloadError(BuilderError):
                 url (str, optional): The URL of the failed icon scraping. Defaults to None.
         """
         super().__init__(*args)
-        self.url = kwargs.get("url", None)
+        self.url = kwargs.get("url")
 
     def __str__(self: Self) -> str:
         """Exception message."""
@@ -119,7 +125,7 @@ class PatchesJsonLoadError(BuilderError):
                 file_name (str, optional): The name of json file. Defaults to None.
         """
         super().__init__(*args)
-        self.file_name = kwargs.get("file_name", None)
+        self.file_name = kwargs.get("file_name")
 
     def __str__(self: Self) -> str:
         """Exception message."""
